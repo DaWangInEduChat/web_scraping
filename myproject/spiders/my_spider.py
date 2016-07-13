@@ -28,4 +28,6 @@ class MySpider(scrapy.spiders.Spider):
             s.feed(temp)
             data = s.get_data().strip(' \t\n\r')
             if (data != ""):
-                yield MyprojectItem(text=data)
+                yield MyprojectItem(text=data, current_url=response.url)
+        for url in response.xpath('//a/@href').extract():
+            yield scrapy.Request(response.urljoin(url), callback=self.parse_website)
