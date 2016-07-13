@@ -29,9 +29,3 @@ class MySpider(scrapy.spiders.Spider):
             data = s.get_data().strip(' \t\n\r')
             if (data != ""):
                 yield MyprojectItem(text=data)
-        for div in response.xpath('//p').extract():
-            s = MLStripper()
-            s.feed(div)
-            data = s.get_data().strip(' \t\n\r')
-            if (data != ""):
-                yield MyprojectItem(text=data)
