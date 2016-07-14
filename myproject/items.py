@@ -11,4 +11,4 @@ import scrapy
 class MyprojectItem(scrapy.Item):
     # define the fields for your item here like:
     text = scrapy.Field()
-    link = scrapy.Field()
+    current_url = scrapy.Field()
