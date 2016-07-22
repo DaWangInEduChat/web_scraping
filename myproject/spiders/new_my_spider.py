@@ -6,39 +6,43 @@ from scrapy.contrib.linkextractors import LinkExtractor
 
 class MySpider(CrawlSpider):
     name = "new_my_spider"
-    allowed_domains = ["nyu.edu"]
+    allowed_domains = ["engineering.nyu.edu"]
     start_urls = [
-        "http://www.nyu.edu/footer/site-map.html"
+        #"http://www.nyu.edu/footer/site-map.html"
+        "http://engineering.nyu.edu/"
     ]
 
     rules = (
-        Rule(LinkExtractor(deny_domains=(
-            'ifp.nyu.edu/', 
-            'shanghai.nyu.edu/calendar/', 
-            'ipk.nyu.edu/calendar/', 
-            'cbi.nyu.edu/svn/',
-            'cbi.nyu.edu/pipermail/', 
-            'dlib.nyu.edu/themasses/books/', 
-            'shanghai.nyu.edu', 
-            'shanghai.nyu.edu/',
-            'nyuad.nyu.edu',  
-            'nyuad.nyu.edu/', 
-            'nypg.bio.nyu.edu/sequences/', )), callback='parse_website', 
+        Rule(LinkExtractor(
+                
+                deny=(
+                    '.*biomolecular/seminars.*'
+                    '.*/multimedia/.*',
+                    '.*/preview_course_nopop.*',
+                    '.*/download/.*',
+                    '.*/calendar/.*',
+                    '.*/themasses/books/.*',
+                    '.*/svn/.*',
+                    '.*/pipermail/.*',
+                    '.*nypg\.bio\.nyu\.edu/sequences/.*',
+                    '.*dlib\.nyu\.edu/undercover/.*', 
+                    '.*/sca\.calendar.*', 
+                    '.*math\.nyu\.edu/student_resources/wwiki/index\.php.*',
+                    '.*dlib\.nyu\.edu/awdl/.*',
+                    '.*skirball\.med\.nyu\.edu/facilities/.*',
+                    '.*gallatin\.nyu\.edu/academics/courses.*',
+                    '.*www\.stern\.nyu\.edu/networks/.*', 
+                ), 
+                deny_domains=(
+                    'ifp.nyu.edu', 
+                    'nyuad.nyu.edu', 
+                    'wikis.nyu.edu', 
+                    'nyuscholars.nyu.edu', 
+                    'geo.nyu.edu',
+                    'medhum.med.nyu.edu'), 
+            ), callback='parse_website', follow=True, 
             ),
     )
-
-    def parse_sitemap(self, response):
-        # for sel in response.xpath('//div[@class="link"]'):
-        #     item = MyprojectItem()
-        #     item['text'] = sel.xpath('a/text()').extract()
-        #     item['link'] = sel.xpath('a/@href').extract()
-        #     yield item
-
-        # for title_text in response.xpath('//div[@class="link"]/a/text()').extract():
-        #     yield MyprojectItem(text=title_text)
-
-        for url in response.xpath('//div[@class="link"]/a/@href').extract():
-            yield scrapy.Request(response.urljoin(url), callback=self.parse_website)
 
     def parse_website(self, response):
         for temp in response.xpath('//p').extract():
@@ -47,5 +51,5 @@ class MySpider(CrawlSpider):
             data = s.get_data().strip(' \t\n\r')
             if (data != ""):
                 yield MyprojectItem(text=data, current_url=response.url)
-        for url in response.xpath('//a/@href').extract():
-            yield scrapy.Request(response.urljoin(url), callback=self.parse_website)
+        # for url in response.xpath('//a/@href').extract():
+        #     yield scrapy.Request(response.urljoin(url), callback=self.parse_website)
