@@ -16,7 +16,7 @@ class MySpider(CrawlSpider):
         Rule(LinkExtractor(
                 
                 deny=(
-                    '.*biomolecular/seminars.*'
+                    '.*biomolecular/.*',
                     '.*/multimedia/.*',
                     '.*/preview_course_nopop.*',
                     '.*/download/.*',
